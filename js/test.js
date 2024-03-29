@@ -1,1 +1,2 @@
-alert(document.cookie)
+alert(1);
+alert(document.cookie);
