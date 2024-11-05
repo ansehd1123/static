@@ -2,48 +2,93 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Name Extractor</title>
+    <title>Extract and Format Input Names</title>
+    <style>
+        body {
+            margin: 0; /* 기본 마진 제거 */
+            padding: 0 20px; /* 왼쪽과 오른쪽에 20px 패딩 추가 */
+            font-family: Arial, sans-serif; /* 폰트 설정 */
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px; /* 섹션 간 간격 추가 */
+        }
+        .section {
+            width: 45%; /* 각 섹션의 너비를 설정 */
+        }
+        textarea {
+            width: 100%; /* textarea를 전체 너비로 설정 */
+            height: 300px; /* 높이를 300px로 설정 */
+            padding: 10px; /* textarea 내부 여백 추가 */
+            box-sizing: border-box; /* padding 포함 전체 크기 계산 */
+        }
+        button {
+            margin-top: 10px; /* 버튼 간 간격 추가 */
+        }
+        h3 {
+            margin-bottom: 5px; /* 제목과 텍스트 간 간격 추가 */
+        }
+    </style>
 </head>
 <body>
+    <h2>HTML 데이터를 입력하고 버튼을 눌러 결과를 확인하세요:</h2>
 
-<!-- HTML 데이터 영역 -->
-<div id="html-data">
-    <form>
-        <input type="text" name="username">
-        <input type="password" name="password">
-        <input type="email" name="email">
-        <input type="hidden" name="hidden_field">
-    </form>
-</div>
+    <div class="container">
+        <div class="section">
+            <h3>HTML 데이터 입력:</h3>
+            <textarea id="htmlData" placeholder="HTML 데이터를 입력하세요...">
+<form>
+    <input type="text" name="username">
+    <input type="password" name="password">
+    <input type="email" name="email">
+    <input type="hidden" name="hidden_field">
+</form>
+            </textarea>
+            <br>
+            <button onclick="showFormattedNames()">변환하기</button>
+            <h3>변환 결과:</h3>
+            <textarea id="formattedResult" readonly></textarea> <!-- 변환 결과를 표시하는 textarea -->
+        </div>
 
-<!-- 결과를 표시할 영역 -->
-<div>
-    <h3>추출된 결과:</h3>
-    <p id="result"></p>
-</div>
+        <div class="section">
+            <h3>URL 인코딩된 데이터 입력:</h3>
+            <textarea id="urlEncodedData" placeholder="URL 인코딩된 데이터를 입력하세요..."></textarea>
+            <br>
+            <button onclick="decodeUrlData()">디코딩하기</button>
+            <h3>디코딩된 결과:</h3>
+            <textarea id="decodedResult" readonly></textarea> <!-- 디코딩 결과를 표시하는 textarea -->
+        </div>
+    </div>
 
-<script>
-function extractAndFormatInputNames() {
-    // HTML 데이터를 DOM 객체로 변환
-    const htmlData = document.getElementById('html-data').innerHTML;
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlData, 'text/html');
+    <script>
+        function showFormattedNames() {
+            const htmlData = document.getElementById("htmlData").value;
 
-    // 모든 input 태그의 name 속성 값을 추출
-    const inputNames = Array.from(doc.querySelectorAll('input[name]'))
-        .map(input => input.getAttribute('name'));
+            // HTML 데이터를 DOM 객체로 변환
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlData, 'text/html');
 
-    // '[name]=testtest' 형식으로 변환 후 한 줄로 이어 붙임
-    const formattedOutput = inputNames.map(name => `${name}=testtest`).join('&');
-    
-    // 결과를 HTML에 표시
-    document.getElementById('result').textContent = formattedOutput;
-}
+            // 모든 input 태그의 name 속성 값을 추출
+            const inputNames = Array.from(doc.querySelectorAll('input[name]'))
+                .map(input => input.getAttribute('name'));
 
-// 함수 호출
-extractAndFormatInputNames();
-</script>
+            // '[name]=testtest' 형식으로 변환 후 한 줄로 이어 붙임
+            const formattedOutput = inputNames.map(name => `${name}=testtest`).join('&');
 
+            // 변환 결과를 같은 textarea에 표시
+            document.getElementById("formattedResult").value = formattedOutput;
+        }
+
+        function decodeUrlData() {
+            const urlEncodedData = document.getElementById("urlEncodedData").value;
+
+            // URL 인코딩된 데이터 디코딩
+            const decodedUrlData = decodeURIComponent(urlEncodedData);
+
+            // 디코딩된 결과를 같은 textarea에 표시
+            document.getElementById("decodedResult").value = decodedUrlData;
+        }
+    </script>
 </body>
 </html>
