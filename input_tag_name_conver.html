@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Name Extractor</title>
+</head>
+<body>
+
+<!-- HTML 데이터 영역 -->
+<div id="html-data">
+    <form>
+        <input type="text" name="username">
+        <input type="password" name="password">
+        <input type="email" name="email">
+        <input type="hidden" name="hidden_field">
+    </form>
+</div>
+
+<!-- 결과를 표시할 영역 -->
+<div>
+    <h3>추출된 결과:</h3>
+    <p id="result"></p>
+</div>
+
+<script>
+function extractAndFormatInputNames() {
+    // HTML 데이터를 DOM 객체로 변환
+    const htmlData = document.getElementById('html-data').innerHTML;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlData, 'text/html');
+
+    // 모든 input 태그의 name 속성 값을 추출
+    const inputNames = Array.from(doc.querySelectorAll('input[name]'))
+        .map(input => input.getAttribute('name'));
+
+    // '[name]=testtest' 형식으로 변환 후 한 줄로 이어 붙임
+    const formattedOutput = inputNames.map(name => `${name}=testtest`).join('&');
+    
+    // 결과를 HTML에 표시
+    document.getElementById('result').textContent = formattedOutput;
+}
+
+// 함수 호출
+extractAndFormatInputNames();
+</script>
+
+</body>
+</html>
