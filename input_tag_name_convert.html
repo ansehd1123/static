@@ -62,33 +62,35 @@
     </div>
 
     <script>
-        function showFormattedNames() {
-            const htmlData = document.getElementById("htmlData").value;
+        document.getElementById("extractBtn").addEventListener("click", function () {
+            const text = document.getElementById("inputText").value;
+            // IP 주소 4옥텟 모두 추출
+            const ipRegex = /\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\b/g;
+            const ipSet = new Set();
 
-            // HTML 데이터를 DOM 객체로 변환
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlData, 'text/html');
+            let match;
+            while ((match = ipRegex.exec(text)) !== null) {
+            const [oct1, oct2, oct3, oct4] = [
+                parseInt(match[1]),
+                parseInt(match[2]),
+                parseInt(match[3]),
+                parseInt(match[4])
+            ];
+            // 0~255 범위 검증 (4번째 옥텟도 포함)
+            if (
+                oct1 >= 0 && oct1 <= 255 &&
+                oct2 >= 0 && oct2 <= 255 &&
+                oct3 >= 0 && oct3 <= 255 &&
+                oct4 >= 0 && oct4 <= 255
+            ) {
+                // 3옥텟까지만 추출
+                ipSet.add(`${oct1}.${oct2}.${oct3}.`);
+            }
+            }
 
-            // 모든 input 태그의 name 속성 값을 추출
-            const inputNames = Array.from(doc.querySelectorAll('input[name]'))
-                .map(input => input.getAttribute('name'));
-
-            // '[name]=testtest' 형식으로 변환 후 한 줄로 이어 붙임
-            const formattedOutput = inputNames.map(name => `${name}=testtest`).join('&');
-
-            // 변환 결과를 같은 textarea에 표시
-            document.getElementById("formattedResult").value = formattedOutput;
-        }
-
-        function decodeUrlData() {
-            const urlEncodedData = document.getElementById("urlEncodedData").value;
-
-            // URL 인코딩된 데이터 디코딩
-            const decodedUrlData = decodeURIComponent(urlEncodedData);
-
-            // 디코딩된 결과를 같은 textarea에 표시
-            document.getElementById("decodedResult").value = decodedUrlData;
-        }
+            const result = Array.from(ipSet).sort().join('\n');
+            document.getElementById("output").textContent = result || "IP 대역이 없습니다.";
+        });
     </script>
 </body>
 </html>
