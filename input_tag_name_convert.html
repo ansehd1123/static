@@ -1,96 +1,67 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>Extract and Format Input Names</title>
-    <style>
-        body {
-            margin: 0; /* 기본 마진 제거 */
-            padding: 0 20px; /* 왼쪽과 오른쪽에 20px 패딩 추가 */
-            font-family: Arial, sans-serif; /* 폰트 설정 */
-        }
-        .container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px; /* 섹션 간 간격 추가 */
-        }
-        .section {
-            width: 45%; /* 각 섹션의 너비를 설정 */
-        }
-        textarea {
-            width: 100%; /* textarea를 전체 너비로 설정 */
-            height: 300px; /* 높이를 300px로 설정 */
-            padding: 10px; /* textarea 내부 여백 추가 */
-            box-sizing: border-box; /* padding 포함 전체 크기 계산 */
-        }
-        button {
-            margin-top: 10px; /* 버튼 간 간격 추가 */
-        }
-        h3 {
-            margin-bottom: 5px; /* 제목과 텍스트 간 간격 추가 */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>IP 대역 추출기 (/24)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      font-family: monospace;
+    }
+    button {
+      padding: 10px 20px;
+      margin-bottom: 10px;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
-    <h2>HTML 데이터를 입력하고 버튼을 눌러 결과를 확인하세요:</h2>
 
-    <div class="container">
-        <div class="section">
-            <h3>HTML 데이터 입력:</h3>
-            <textarea id="htmlData" placeholder="HTML 데이터를 입력하세요...">
-<form>
-    <input type="text" name="username">
-    <input type="password" name="password">
-    <input type="email" name="email">
-    <input type="hidden" name="hidden_field">
-</form>
-            </textarea>
-            <br>
-            <button onclick="showFormattedNames()">변환하기</button>
-            <h3>변환 결과:</h3>
-            <textarea id="formattedResult" readonly></textarea> <!-- 변환 결과를 표시하는 textarea -->
-        </div>
+  <h2>🛠️ IP 대역 추출기 (/24)</h2>
 
-        <div class="section">
-            <h3>URL 인코딩된 데이터 입력:</h3>
-            <textarea id="urlEncodedData" placeholder="URL 인코딩된 데이터를 입력하세요..."></textarea>
-            <br>
-            <button onclick="decodeUrlData()">디코딩하기</button>
-            <h3>디코딩된 결과:</h3>
-            <textarea id="decodedResult" readonly></textarea> <!-- 디코딩 결과를 표시하는 textarea -->
-        </div>
-    </div>
+  <textarea id="inputText" placeholder="여기에 여러 줄의 텍스트를 입력하세요..."></textarea>
+  <br>
+  <button id="extractBtn">추출하기</button>
 
-    <script>
-        document.getElementById("extractBtn").addEventListener("click", function () {
-            const text = document.getElementById("inputText").value;
-            // IP 주소 4옥텟 모두 추출
-            const ipRegex = /\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\b/g;
-            const ipSet = new Set();
+  <h3>📋 추출된 대역 목록:</h3>
+  <pre id="output"></pre>
 
-            let match;
-            while ((match = ipRegex.exec(text)) !== null) {
-            const [oct1, oct2, oct3, oct4] = [
-                parseInt(match[1]),
-                parseInt(match[2]),
-                parseInt(match[3]),
-                parseInt(match[4])
-            ];
-            // 0~255 범위 검증 (4번째 옥텟도 포함)
-            if (
-                oct1 >= 0 && oct1 <= 255 &&
-                oct2 >= 0 && oct2 <= 255 &&
-                oct3 >= 0 && oct3 <= 255 &&
-                oct4 >= 0 && oct4 <= 255
-            ) {
-                // 3옥텟까지만 추출
-                ipSet.add(`${oct1}.${oct2}.${oct3}.`);
-            }
-            }
+  <script>
+    document.getElementById("extractBtn").addEventListener("click", function () {
+      const text = document.getElementById("inputText").value;
 
-            const result = Array.from(ipSet).sort().join('\n');
-            document.getElementById("output").textContent = result || "IP 대역이 없습니다.";
-        });
-    </script>
+      // IP 주소 앞 3옥텟 추출용 정규식
+      const ipRegex = /\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.\d{1,3}\b/g;
+      const ipSet = new Set();
+
+      let match;
+      while ((match = ipRegex.exec(text)) !== null) {
+        const [oct1, oct2, oct3] = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+        // 0~255 범위 검증
+        if (
+          oct1 >= 0 && oct1 <= 255 &&
+          oct2 >= 0 && oct2 <= 255 &&
+          oct3 >= 0 && oct3 <= 255
+        ) {
+          ipSet.add(`${oct1}.${oct2}.${oct3}.`);
+        }
+      }
+
+      const result = Array.from(ipSet).sort().join('\n');
+      document.getElementById("output").textContent = result || "IP 대역이 없습니다.";
+    });
+  </script>
+
 </body>
 </html>
