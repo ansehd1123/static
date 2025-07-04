@@ -1,62 +1,94 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>IP 대역 앞 3옥텟 추출기</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    textarea {
-      width: 100%;
-      height: 200px;
-      font-family: monospace;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 20px;
-    }
-    pre {
-      background: #f5f5f5;
-      padding: 10px;
-      border: 1px solid #ccc;
-      white-space: pre-wrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Extract and Format Input Names</title>
+    <style>
+        body {
+            margin: 0; /* 기본 마진 제거 */
+            padding: 0 20px; /* 왼쪽과 오른쪽에 20px 패딩 추가 */
+            font-family: Arial, sans-serif; /* 폰트 설정 */
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px; /* 섹션 간 간격 추가 */
+        }
+        .section {
+            width: 45%; /* 각 섹션의 너비를 설정 */
+        }
+        textarea {
+            width: 100%; /* textarea를 전체 너비로 설정 */
+            height: 300px; /* 높이를 300px로 설정 */
+            padding: 10px; /* textarea 내부 여백 추가 */
+            box-sizing: border-box; /* padding 포함 전체 크기 계산 */
+        }
+        button {
+            margin-top: 10px; /* 버튼 간 간격 추가 */
+        }
+        h3 {
+            margin-bottom: 5px; /* 제목과 텍스트 간 간격 추가 */
+        }
+    </style>
 </head>
 <body>
+    <h2>HTML 데이터를 입력하고 버튼을 눌러 결과를 확인하세요:</h2>
 
-  <h2>📡 IP 대역 앞 3옥텟 추출기</h2>
+    <div class="container">
+        <div class="section">
+            <h3>HTML 데이터 입력:</h3>
+            <textarea id="htmlData" placeholder="HTML 데이터를 입력하세요...">
+<form>
+    <input type="text" name="username">
+    <input type="password" name="password">
+    <input type="email" name="email">
+    <input type="hidden" name="hidden_field">
+</form>
+            </textarea>
+            <br>
+            <button onclick="showFormattedNames()">변환하기</button>
+            <h3>변환 결과:</h3>
+            <textarea id="formattedResult" readonly></textarea> <!-- 변환 결과를 표시하는 textarea -->
+        </div>
 
-  <textarea id="inputText" placeholder="여러 줄의 IP 또는 CIDR 텍스트를 입력하세요..."></textarea>
-  <br>
-  <button id="extractBtn">추출하기</button>
+        <div class="section">
+            <h3>URL 인코딩된 데이터 입력:</h3>
+            <textarea id="urlEncodedData" placeholder="URL 인코딩된 데이터를 입력하세요..."></textarea>
+            <br>
+            <button onclick="decodeUrlData()">디코딩하기</button>
+            <h3>디코딩된 결과:</h3>
+            <textarea id="decodedResult" readonly></textarea> <!-- 디코딩 결과를 표시하는 textarea -->
+        </div>
+    </div>
 
-  <h3>📋 추출 결과:</h3>
-  <pre id="output"></pre>
+    <script>
+        function showFormattedNames() {
+            const htmlData = document.getElementById("htmlData").value;
 
-  <script>
-    document.getElementById("extractBtn").addEventListener("click", function () {
-      const text = document.getElementById("inputText").value;
+            // HTML 데이터를 DOM 객체로 변환
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlData, 'text/html');
 
-      // IP 또는 CIDR 형식에서 앞 3옥텟 추출
-      const ipRegex = /\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\b/g;
-      const ipSet = new Set();
+            // 모든 input 태그의 name 속성 값을 추출
+            const inputNames = Array.from(doc.querySelectorAll('input[name]'))
+                .map(input => input.getAttribute('name'));
 
-      let match;
-      while ((match = ipRegex.exec(text)) !== null) {
-        const [a, b, c, d] = match.slice(1).map(Number);
-        // 0~255 범위의 유효한 IP만 추출
-        if ([a, b, c, d].every(oct => oct >= 0 && oct <= 255)) {
-          ipSet.add(`${a}.${b}.${c}.`);
+            // '[name]=testtest' 형식으로 변환 후 한 줄로 이어 붙임
+            const formattedOutput = inputNames.map(name => `${name}=testtest`).join('&');
+
+            // 변환 결과를 같은 textarea에 표시
+            document.getElementById("formattedResult").value = formattedOutput;
         }
-      }
 
-      const result = Array.from(ipSet).sort().join('\n');
-      document.getElementById("output").textContent = result || "IP 대역이 없습니다.";
-    });
-  </script>
+        function decodeUrlData() {
+            const urlEncodedData = document.getElementById("urlEncodedData").value;
 
+            // URL 인코딩된 데이터 디코딩
+            const decodedUrlData = decodeURIComponent(urlEncodedData);
+
+            // 디코딩된 결과를 같은 textarea에 표시
+            document.getElementById("decodedResult").value = decodedUrlData;
+        }
+    </script>
 </body>
 </html>
