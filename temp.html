@@ -1,0 +1,96 @@
+<!--sub_visual-->
+<div class="sub_visual question">
+    <div class="search_area">
+        <ul class="point_ask">
+            <li>
+                <a href="">
+                    <span class="group">예금</span>
+                    <span class="ask">가입한 적금의 <span class="colorBlue">자동이체</span>가 가능한가요?</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span class="group">예금</span>
+                    <span class="ask">적금이 만기되었는데 어떻게 <span class="colorBlue">해지</span>하나요?</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span class="group">기타</span>
+                    <span class="ask"><span class="colorBlue">비대면계좌개설</span>이 가능한가요?</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span class="group">기타</span>
+                    <span class="ask"><span class="colorBlue">고객정보보호</span>는 어떻게 이뤄지나요?</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span class="group">대출</span>
+                    <span class="ask"><span class="colorBlue">연체이자 및 연체료</span>에 대해 알고싶어요.</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="inner">
+        <ul class="location">
+            <li>HOME</li>
+            <li>고객센터</li>
+            <li class="cur">Q&A</li>
+        </ul>
+    </div>
+</div>
+<!--sub_visual end-->
+<!-- #contents -->
+<div id="cnt">
+    <div class="inner">
+        <!--제목-->
+        <p class="title">Q&A<span class="eng">question and answer</span></p>
+        <!--제목 end-->
+        <!--내용부-->
+        <div class="content">
+            <ul class="tab">
+                <li><a href="http://www.kusb.co.kr/inc.php?inc=sub_04/sub_03_05.html">전체</a></li>
+                            </ul>
+            <div class="alarm desc line160">
+                <p><span class="colorBlue">금융상품공시</span>는 금융소비자가 금융상품을 이해하고 유용한 정보를 제공함으로써 금융소비자를 보호하기 위한 제도입니다.</p>
+                <p>금융상품을 가입하기 전 상품공시실의 약관 및 금리 등을 통해 상품 내용을 꼭 확인하고 가입하시기 바랍니다.</p>
+            </div>
+                        <!--내용부 end-->
+            <script>
+                $(function() {
+                    var quickWrap = $('.quick_wrap');
+                    var quickBtn = $('.quick_btn');
+                    var quickClose = $('.quick_close');
+
+                    quickClose.hide();
+
+                    quickBtn.click(function() {
+                        quickWrap.stop().animate({
+                            marginLeft:"-181px"
+                        },300);
+                        quickClose.show();
+                    });
+
+                    quickClose.click(function() {
+                        quickWrap.stop().animate({
+                            marginLeft:"0px"
+                        },300);
+                        quickClose.hide();
+                    });
+                });
+
+                if(tab) {
+                    var tab = 0;
+                } else {
+                    var tab = "";
+                }
+
+                $(".tab > li").eq(tab).addClass("on");
+            </script>
+        </div>
+        <!-- #contents end-->
+    </div>
+</div>
