@@ -5,29 +5,29 @@
     <title>Extract and Format Input Names</title>
     <style>
         body {
-            margin: 0; /* 기본 마진 제거 */
-            padding: 0 20px; /* 왼쪽과 오른쪽에 20px 패딩 추가 */
-            font-family: Arial, sans-serif; /* 폰트 설정 */
+            margin: 0;
+            padding: 0 20px;
+            font-family: Arial, sans-serif;
         }
         .container {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px; /* 섹션 간 간격 추가 */
+            margin-top: 20px;
         }
         .section {
-            width: 45%; /* 각 섹션의 너비를 설정 */
+            width: 45%;
         }
         textarea {
-            width: 100%; /* textarea를 전체 너비로 설정 */
-            height: 300px; /* 높이를 300px로 설정 */
-            padding: 10px; /* textarea 내부 여백 추가 */
-            box-sizing: border-box; /* padding 포함 전체 크기 계산 */
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            box-sizing: border-box;
         }
         button {
-            margin-top: 10px; /* 버튼 간 간격 추가 */
+            margin-top: 10px;
         }
         h3 {
-            margin-bottom: 5px; /* 제목과 텍스트 간 간격 추가 */
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -43,12 +43,13 @@
     <input type="password" name="password">
     <input type="email" name="email">
     <input type="hidden" name="hidden_field">
+    <input type="text" name="username"> <!-- 중복 예시 -->
 </form>
             </textarea>
             <br>
             <button onclick="showFormattedNames()">변환하기</button>
             <h3>변환 결과:</h3>
-            <textarea id="formattedResult" readonly></textarea> <!-- 변환 결과를 표시하는 textarea -->
+            <textarea id="formattedResult" readonly></textarea>
         </div>
 
         <div class="section">
@@ -57,7 +58,7 @@
             <br>
             <button onclick="decodeUrlData()">디코딩하기</button>
             <h3>디코딩된 결과:</h3>
-            <textarea id="decodedResult" readonly></textarea> <!-- 디코딩 결과를 표시하는 textarea -->
+            <textarea id="decodedResult" readonly></textarea>
         </div>
     </div>
 
@@ -65,28 +66,31 @@
         function showFormattedNames() {
             const htmlData = document.getElementById("htmlData").value;
 
-            // HTML 데이터를 DOM 객체로 변환
+            // HTML 파싱
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlData, 'text/html');
 
-            // 모든 input 태그의 name 속성 값을 추출
-            const inputNames = Array.from(doc.querySelectorAll('input[name]'))
+            // 모든 input[name] 추출
+            const rawNames = Array.from(doc.querySelectorAll('input[name]'))
                 .map(input => input.getAttribute('name'));
 
-            // '[name]=testtest' 형식으로 변환 후 한 줄로 이어 붙임
-            const formattedOutput = inputNames.map(name => `${name}=testtest`).join('&');
+            // ***** 중복 제거 로직 추가 *****
+            const uniqueNames = [...new Set(rawNames)];
 
-            // 변환 결과를 같은 textarea에 표시
+            // '[name]=testtest' 형식으로 변환
+            const formattedOutput = uniqueNames
+                .map(name => `${name}=testtest`)
+                .join('&');
+
             document.getElementById("formattedResult").value = formattedOutput;
         }
 
         function decodeUrlData() {
             const urlEncodedData = document.getElementById("urlEncodedData").value;
 
-            // URL 인코딩된 데이터 디코딩
+            // URL 디코딩
             const decodedUrlData = decodeURIComponent(urlEncodedData);
 
-            // 디코딩된 결과를 같은 textarea에 표시
             document.getElementById("decodedResult").value = decodedUrlData;
         }
     </script>
