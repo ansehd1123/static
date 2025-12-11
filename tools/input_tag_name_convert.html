@@ -77,14 +77,13 @@
             // 중복 제거
             const uniqueNames = [...new Set(rawNames)];
 
-            // '[name]=testtest' 형식으로 변환
+            // 번호 자동 증가 (test1, test2, test3...)
             const formattedOutput = uniqueNames
-                .map(name => `${name}=testtest`)
+                .map((name, index) => `${name}=testtest${index + 1}`)
                 .join('&');
 
             document.getElementById("formattedResult").value = formattedOutput;
         }
-
 
         function decodeUrlData() {
             const urlEncodedData = document.getElementById("urlEncodedData").value;
